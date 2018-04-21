@@ -1,0 +1,9 @@
+/.bundle
+/Gemfile.lock
+/*.gem
+/gems
+/settings
+/tmp
+.DS_store
+.archive
+script

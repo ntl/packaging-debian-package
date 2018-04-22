@@ -14,45 +14,12 @@ context "Controls" do
       assert((File.extname(deb_file)) == '.deb')
     end
 
-    context "Control Information" do
-      read_field = proc { |field|
-        line = `dpkg-deb -f #{deb_file} | grep '^#{field}:'`.chomp
+    test "Metadata" do
+      metadata = Controls::Package::Queries::GetMetadata.(deb_file)
 
-        _, value = line.split(/[[:blank:]]+/, 2)
+      control_metadata = Controls::Package::Metadata.example
 
-        value
-      }
-
-      {
-        'Package' => Controls::Package::ControlFile.package,
-        'Source' => Controls::Package::ControlFile.source,
-        'Version' => Controls::Package::ControlFile.version,
-        'Section' => Controls::Package::ControlFile.section,
-        'Priority' => Controls::Package::ControlFile.priority,
-        'Architecture' => Controls::Package::ControlFile.architecture,
-        'Essential' => Controls::Package::ControlFile.essential ? 'yes' : 'no',
-        'Depends' => Controls::Package::ControlFile.depends,
-        'Pre-Depends' => Controls::Package::ControlFile.pre_depends,
-        'Recommends' => Controls::Package::ControlFile.recommends,
-        'Suggests' => Controls::Package::ControlFile.suggests,
-        'Enhances' => Controls::Package::ControlFile.enhances,
-        'Breaks' => Controls::Package::ControlFile.breaks,
-        'Conflicts' => Controls::Package::ControlFile.conflicts,
-        'Installed-Size' => Controls::Package::ControlFile.installed_size.to_s,
-        'Maintainer' => Controls::Package::ControlFile.maintainer,
-        'Description' => Controls::Package::ControlFile.description,
-        'Homepage' => Controls::Package::ControlFile.homepage,
-        'Built-Using' => Controls::Package::ControlFile.built_using
-      }.each do |field, control_value|
-        test field do
-          value = read_field.(field)
-
-          comment "Value: #{value.inspect}"
-          comment "Control: #{control_value.inspect}"
-
-          assert(value == control_value)
-        end
-      end
+      assert(metadata == control_metadata)
     end
 
     context "Contents" do

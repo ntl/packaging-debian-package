@@ -1,6 +1,6 @@
 module Packaging
   module Debian
-    module Package
+    class Package
       module Controls
         module Package
           module ControlFile

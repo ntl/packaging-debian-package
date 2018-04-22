@@ -1,8 +1,10 @@
 module Packaging
   module Debian
-    module Package
+    class Package
       module Controls
         module Package
+          extend Packaging::Debian::Schemas::Controls::Package::Data
+
           def self.example(name: nil, version: nil, contents: nil, **attributes)
             name ||= self.name
             version ||= self.version
@@ -43,19 +45,21 @@ module Packaging
             ::File.join(tmp_dir, "#{name}-#{version}.deb")
           end
 
-          def self.filename(package: nil, version: nil)
+          def self.filename(package: nil, version: nil, directory: nil)
             package ||= self.name
             version ||= self.version
 
-            "#{package}-#{version}.deb"
+            basename = "#{package}-#{version}.deb"
+
+            if directory.nil?
+              basename
+            else
+              File.join(directory, basename)
+            end
           end
 
           def self.name
-            ControlFile.package
-          end
-
-          def self.version
-            ControlFile.version
+            package
           end
         end
       end

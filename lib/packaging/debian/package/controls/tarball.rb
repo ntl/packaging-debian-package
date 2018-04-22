@@ -1,6 +1,6 @@
 module Packaging
   module Debian
-    module Package
+    class Package
       module Controls
         module Tarball
           def self.example(package_name: nil, version: nil, contents: nil)

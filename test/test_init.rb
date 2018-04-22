@@ -12,3 +12,5 @@ require 'pp'
 require 'packaging/debian/package/controls'
 
 include Packaging::Debian
+
+Controls = Packaging::Debian::Package::Controls

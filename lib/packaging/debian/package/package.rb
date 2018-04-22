@@ -31,7 +31,7 @@ module Packaging
       end
 
       def call(&modify_metadata)
-        logger.trace { "Building debian package (Name: #{name.inspect}, Version: #{version.inspect})" }
+        logger.trace { "Building debian package (#{LogText.attributes(self)})" }
 
         untar
 
@@ -39,13 +39,19 @@ module Packaging
 
         file = generate_deb
 
-        logger.info { "Debian package built (Name: #{name.inspect}, Version: #{version.inspect}, File: #{file.inspect})" }
+        logger.info { "Debian package built (#{LogText.attributes(self)}, File: #{file.inspect})" }
 
         file
       end
 
       def untar
-        gzip_reader = Zlib::GzipReader.new(tarball_io)
+        begin
+          gzip_reader = Zlib::GzipReader.new(tarball_io)
+        rescue Zlib::GzipFile::Error
+          error_message = "Packaging failed, input is not in gzip format (#{LogText.attributes(self)})"
+          logger.error { error_message }
+          raise PackagingError, error_message
+        end
 
         begin
           Gem::Package::TarReader.new(gzip_reader) do |tar_reader|
@@ -112,7 +118,13 @@ module Packaging
 
           exit_status = wait_thr.value
 
-          fail "Not handled yet" unless exit_status.success?
+          unless exit_status.success?
+            value = exit_status.exitstatus
+
+            error_message = "Packaging failed; dpkg returned nonzero status (#{LogText.attributes(self)}, Value: #{value})"
+            logger.error { error_message }
+            raise PackagingError, error_message
+          end
         end
 
         output_file
@@ -157,6 +169,14 @@ module Packaging
       def control_file
         @control_file ||= File.join(stage_dir, 'DEBIAN', 'control')
       end
+
+      module LogText
+        def self.attributes(package)
+          "Name: #{package.name}, Version: #{package.version}"
+        end
+      end
+
+      PackagingError = Class.new(StandardError)
     end
   end
 end

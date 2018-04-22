@@ -8,45 +8,22 @@ module Packaging
           def self.example(name: nil, version: nil, contents: nil, **attributes)
             name ||= self.name
             version ||= self.version
-            contents ||= Contents.example
 
-            tmp_dir = ::Dir.mktmpdir('package-control')
+            tarball = Tarball.example(package_name: name, version: version, contents: contents)
 
-            stage_dir = ::File.join(tmp_dir, "#{name}-#{version}")
+            output_dir = Dir.mktmpdir('package-control')
 
-            debian_dir = ::File.join(stage_dir, 'DEBIAN')
+            package = Packaging::Debian::Package.new(tarball, name, version)
+            package.maintainer = self.maintainer
+            package.output_dir = output_dir
 
-            Dir.mkdir(stage_dir)
-            Dir.mkdir(debian_dir)
+            control_metadata = Metadata.example(package: name, version: version)
 
-            control_file = ControlFile.example(
-              package: name,
-              version: version,
-              **attributes
-            )
-
-            ::File.write(
-              ::File.join(debian_dir, 'control'),
-              control_file
-            )
-
-            contents.each do |file, data|
-              path = ::File.join(stage_dir, file)
-
-              if data == Dir
-                ::FileUtils.mkdir_p(path)
-              else
-                dir = ::File.dirname(path)
-
-                ::FileUtils.mkdir_p(dir)
-
-                ::File.write(path, data)
-              end
+            package.() do |metadata|
+              SetAttributes.(metadata, control_metadata)
             end
 
-            `dpkg-deb -v --build #{stage_dir}`
-
-            ::File.join(tmp_dir, "#{name}-#{version}.deb")
+            package.output_file
           end
 
           def self.filename(package: nil, version: nil, directory: nil)

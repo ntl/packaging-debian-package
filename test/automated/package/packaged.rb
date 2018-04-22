@@ -22,14 +22,14 @@ context "Package" do
     package.()
 
     context "Debian Package" do
-      deb_file_path = File.join(output_dir, "#{name}-#{version}.deb")
+      deb_file = File.join(output_dir, "#{name}-#{version}.deb")
 
       test "File exists and contains data" do
-        assert(File.size?(deb_file_path))
+        assert(File.size?(deb_file))
       end
 
       context "Metadata" do
-        metadata = Controls::Package::Queries::GetMetadata.(deb_file_path)
+        metadata = Controls::Package::Queries::GetMetadata.(deb_file)
 
         refute(metadata.nil?)
 
@@ -47,6 +47,34 @@ context "Package" do
 
         test "Architecture is set to default" do
           assert(metadata.architecture == Package::Defaults.architecture)
+        end
+      end
+
+      context "Contents" do
+        contents_dir = Controls::Package::Extract.(deb_file)
+
+        comment "Directory: #{contents_dir}"
+
+        contents.each do |path, control_data|
+          full_path = File.join(contents_dir, path)
+
+          context "Entry: #{path}" do
+            if control_data == Dir
+              test "Is directory" do
+                assert(File.directory?(full_path))
+              end
+            else
+              test "Exists and has non-zero size" do
+                assert(File.size?(full_path))
+              end
+
+              test "Data" do
+                data = File.read(full_path)
+
+                assert(data == control_data)
+              end
+            end
+          end
         end
       end
     end

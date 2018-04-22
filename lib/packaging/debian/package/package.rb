@@ -56,7 +56,7 @@ module Packaging
         begin
           Gem::Package::TarReader.new(gzip_reader) do |tar_reader|
             tar_reader.each do |entry|
-              destination_path = File.join(stage_dir, entry.full_name)
+              destination_path = File.join(output_dir, entry.full_name)
 
               if entry.directory?
                 FileUtils.mkdir_p(destination_path)

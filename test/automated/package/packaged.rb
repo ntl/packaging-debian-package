@@ -21,8 +21,6 @@ context "Package" do
 
     package.()
 
-    system("find #{output_dir} -type f")
-
     context "Debian Package" do
       deb_file_path = package.output_file
 
@@ -41,10 +39,6 @@ context "Package" do
 
         test "Package version" do
           assert(metadata.version == version)
-        end
-
-        test "Maintainer" do
-          assert(metadata.maintainer == maintainer)
         end
 
         test "Description is set to default" do

@@ -25,6 +25,11 @@ module Packaging
         instance
       end
 
+      def self.call(tarball, name, version, settings=nil, namespace: nil, &modify_metadata)
+        instance = build(tarball, name, version, settings, namespace: namespace)
+        instance.(&modify_metadata)
+      end
+
       def call(&modify_metadata)
         logger.trace { "Building debian package (Name: #{name.inspect}, Version: #{version.inspect})" }
 

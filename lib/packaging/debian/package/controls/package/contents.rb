@@ -6,7 +6,8 @@ module Packaging
           module Contents
             def self.example
               {
-                'some-path/some-file.txt' => "Example debian package\n"
+                'some-path/some-file.txt' => "Example debian package\n",
+                'other-path' => Dir
               }
             end
 

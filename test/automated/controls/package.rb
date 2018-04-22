@@ -32,10 +32,16 @@ context "Controls" do
       control_contents.each do |file, data|
         path = File.join(extract_dir, file)
 
-        read_data = File.read(path)
+        if data == Dir
+          test "#{path}" do
+            assert(File.directory?(path))
+          end
+        else
+          read_data = File.read(path)
 
-        test "#{file}" do
-          assert(data == read_data)
+          test "#{file}" do
+            assert(data == read_data)
+          end
         end
       end
     end

@@ -33,11 +33,15 @@ module Packaging
             contents.each do |file, data|
               path = ::File.join(stage_dir, file)
 
-              dir = ::File.dirname(path)
+              if data == Dir
+                ::FileUtils.mkdir_p(path)
+              else
+                dir = ::File.dirname(path)
 
-              ::FileUtils.mkdir_p(dir)
+                ::FileUtils.mkdir_p(dir)
 
-              ::File.write(path, data)
+                ::File.write(path, data)
+              end
             end
 
             `dpkg-deb -v --build #{stage_dir}`

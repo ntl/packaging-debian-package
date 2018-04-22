@@ -16,8 +16,12 @@ module Packaging
               contents.each do |path, data|
                 full_path = File.join(package_root, path)
 
-                tar_writer.add_file(full_path, 0644) do |file|
-                  file.write(data)
+                if data == Dir
+                  tar_writer.mkdir(full_path, 0755)
+                else
+                  tar_writer.add_file(full_path, 0644) do |file|
+                    file.write(data)
+                  end
                 end
               end
             end

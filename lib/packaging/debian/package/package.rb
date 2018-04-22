@@ -48,7 +48,7 @@ module Packaging
               destination_path = File.join(stage_dir, entry.full_name)
 
               if entry.directory?
-                fail "Not yet covered"
+                FileUtils.mkdir_p(destination_path)
               else
                 destination_dir = File.dirname(destination_path)
 

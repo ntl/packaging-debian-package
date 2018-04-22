@@ -46,14 +46,20 @@ context "Controls" do
           full_path = File.join(dir, package_dir, path)
 
           context "#{path}" do
-            test "Exists and has nonzero size" do
-              assert(File.size?(full_path))
-            end
+            if control_data == Dir
+              test "Is directory" do
+                assert(File.directory?(full_path))
+              end
+            else
+              test "Exists and has nonzero size" do
+                assert(File.size?(full_path))
+              end
 
-            test "Data" do
-              data = File.read(full_path)
+              test "Data" do
+                data = File.read(full_path)
 
-              assert(data == control_data)
+                assert(data == control_data)
+              end
             end
           end
         end

@@ -25,12 +25,18 @@ module Packaging
         instance
       end
 
-      def call
+      def call(&modify_metadata)
+        logger.trace { "Building debian package (Name: #{name.inspect}, Version: #{version.inspect})" }
+
         untar
 
-        write_control_file
+        write_control_file(&modify_metadata)
 
-        generate_deb
+        file = generate_deb
+
+        logger.info { "Debian package built (Name: #{name.inspect}, Version: #{version.inspect}, File: #{file.inspect})" }
+
+        file
       end
 
       def untar
@@ -60,18 +66,20 @@ module Packaging
         end
       end
 
-      def write_control_file
-        package = Schemas::Package.new
-        package.package = name
-        package.version = version
+      def write_control_file(&modify_metadata)
+        metadata = Schemas::Package.new
+        metadata.package = name
+        metadata.version = version
 
-        package.description ||= Defaults.description
-        package.architecture ||= Defaults.architecture
-        package.maintainer ||= self.maintainer
+        modify_metadata.(metadata) unless modify_metadata.nil?
+
+        metadata.description ||= Defaults.description
+        metadata.architecture ||= Defaults.architecture
+        metadata.maintainer ||= self.maintainer
 
         Dir.mkdir(File.dirname(control_file))
 
-        text = Transform::Write.(package, :rfc822)
+        text = Transform::Write.(metadata, :rfc822)
 
         File.write(control_file, text)
       end
@@ -99,7 +107,7 @@ module Packaging
 
           exit_status = wait_thr.value
 
-          #fail "Not handled yet" unless exit_status.success?
+          fail "Not handled yet" unless exit_status.success?
         end
 
         output_file

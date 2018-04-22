@@ -22,7 +22,7 @@ context "Package" do
     package.()
 
     context "Debian Package" do
-      deb_file_path = package.output_file
+      deb_file_path = File.join(output_dir, "#{name}-#{version}.deb")
 
       test "File exists and contains data" do
         assert(File.size?(deb_file_path))

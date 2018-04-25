@@ -1,3 +1,4 @@
 {
-  "maintainer": "Test User <test.user@example.com>"
+  "maintainer": "Test User <test.user@example.com>",
+  "packagesDirectory": "example_packages"
 }

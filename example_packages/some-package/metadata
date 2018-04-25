@@ -1,0 +1,19 @@
+## Package: some-package
+## Version: 1.1.1-11
+Source: some-source-package (1.1.1-11)
+Section: some-section
+Priority: optional
+Architecture: i386
+Essential: yes
+Depends: some-dependency
+Pre-Depends: some-pre-dependency
+Recommends: some-recommended-dependency
+Suggests: some-suggested-dependency
+Enhances: some-enhanced-dependency
+Breaks: some-broken-dependency
+Conflicts: some-conflicted-dependency
+Installed-Size: 1111
+Maintainer: Some Maintainer <some.maintainer@example.com>
+Description: Some package
+Homepage: http://example.com
+Built-Using: gcc-1.11

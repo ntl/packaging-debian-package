@@ -10,6 +10,8 @@ context "Package" do
 
     package = Package.new(tarball_io, name, version)
 
+    package.execute_shell_command.failure!
+
     package.output_dir = Dir.mktmpdir
 
     test "Raises error" do

@@ -20,7 +20,7 @@ module Packaging
 
         settings.set(self, *namespace)
 
-        ShellCommand::Execute.configure(self)
+        ShellCommand::Execute.configure(self, logger: logger)
       end
 
       def self.build(tarball, name, version, settings=nil, namespace: nil)
@@ -107,28 +107,12 @@ module Packaging
         logger.trace { "Generating debian package (File: #{output_file})" }
         logger.trace(tag: :command) { command * ' ' }
 
-        Open3.popen3(*command) do |_, stdout, stderr, wait_thr|
-          until stdout.eof? && stderr.eof? && !wait_thr.alive?
-            read_available_output(stderr) do |stderr_line|
-              logger.warn { stderr_line } 
-            end
+        success, exit_status = execute_shell_command.(command, include: :exit_status)
 
-            read_available_output(stdout) do |stdout_line|
-              logger.debug { stdout_line } 
-            end
-
-            wait_thr.join(0.001)
-          end
-
-          exit_status = wait_thr.value
-
-          unless exit_status.success?
-            value = exit_status.exitstatus
-
-            error_message = "Packaging failed; dpkg returned nonzero status (#{LogText.attributes(self)}, Value: #{value})"
-            logger.error { error_message }
-            raise PackagingError, error_message
-          end
+        unless success
+          error_message = "Packaging failed; dpkg returned nonzero status (#{LogText.attributes(self)}, Value: #{exit_status})"
+          logger.error { error_message }
+          raise PackagingError, error_message
         end
 
         output_file

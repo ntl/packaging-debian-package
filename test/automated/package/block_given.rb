@@ -11,7 +11,7 @@ context "Package" do
 
     tarball_io = Controls::Tarball.example
 
-    package = Package.new(tarball_io, name, version)
+    package = Package.build(tarball_io, name, version)
 
     package.output_dir = Dir.mktmpdir
 

@@ -12,26 +12,36 @@ module Fixtures
     def call
       comment "Directory: #{directory}"
 
-      control_contents.each do |relative_path, control_data|
-        absolute_path = File.join(directory, relative_path)
+      control_contents.each do |entry|
+        case entry
+        when String
+          relative_path = entry
 
-        context "#{relative_path}" do
-          if control_data == Dir
+          absolute_path = File.join(directory, relative_path)
+
+          context "#{relative_path}" do
             test "Is directory" do
               assert(File.directory?(absolute_path))
             end
-          else
-            test "Is file" do
-              assert(File.exist?(absolute_path))
-            end
+          end
 
-            test "Data" do
-              read_data = File.read(absolute_path)
+        when Hash
+          entry.each do |relative_path, control_data|
+            absolute_path = File.join(directory, relative_path)
 
-              comment "Read data: #{read_data.inspect}"
-              comment "Control data: #{control_data.inspect}"
+            context "#{relative_path}" do
+              test "Is file" do
+                assert(File.exist?(absolute_path))
+              end
 
-              assert(read_data == control_data)
+              test "Data" do
+                read_data = File.read(absolute_path)
+
+                comment "Read data: #{read_data.inspect}"
+                comment "Control data: #{control_data.inspect}"
+
+                assert(read_data == control_data)
+              end
             end
           end
         end

@@ -7,7 +7,7 @@ context "Package" do
 
     control_metadata = Controls::Package::Metadata::Alternate.example
 
-    contents = Controls::Package::Contents.example
+    contents = Controls::Contents.example
 
     tarball = Controls::Tarball.example
 

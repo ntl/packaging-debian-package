@@ -21,14 +21,19 @@ module Packaging
               tar_stream = StringIO.new(data)
 
               Gem::Package::TarWriter.new(tar_stream) do |tar_writer|
-                contents.each do |path, data|
-                  full_path = File.join(prefix_directory, path)
+                contents.each do |entry|
+                  case entry
+                  when String
+                    full_path = File.join(prefix_directory, entry)
 
-                  if data == Dir
                     tar_writer.mkdir(full_path, 0755)
-                  else
-                    tar_writer.add_file(full_path, 0644) do |file|
-                      file.write(data)
+                  when Hash
+                    entry.each do |relative_path, data|
+                      absolute_path = File.join(prefix_directory, relative_path)
+
+                      tar_writer.add_file(absolute_path, 0644) do |file|
+                        file.write(data)
+                      end
                     end
                   end
                 end

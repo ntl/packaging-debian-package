@@ -2,7 +2,7 @@ require_relative '../automated_init'
 
 context "Controls" do
   context "Tarball" do
-    contents = Controls::Package::Contents.example
+    contents = Controls::Contents.example
     package_name = Controls::Package.name
     version = Controls::Package.version
 

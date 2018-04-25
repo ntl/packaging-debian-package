@@ -6,7 +6,7 @@ module Packaging
           module PrefixDirectory
             def self.example(package_name: nil, version: nil)
               package_name ||= Package.name
-              version ||= Package.version
+              version ||= Package.upstream_version
 
               "#{package_name}-#{version}"
             end

@@ -3,7 +3,7 @@ require_relative '../automated_init'
 context "Package" do
   context "Packaged" do
     name = Controls::Package.name
-    version = Controls::Package.version
+    version = Controls::Package.upstream_version
     maintainer = Controls::Package.maintainer
 
     contents = Controls::Contents.example

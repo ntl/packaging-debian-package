@@ -3,7 +3,7 @@ require_relative '../automated_init'
 context "Package" do
   context "Block Given" do
     name = Controls::Package.name
-    version = Controls::Package.version
+    version = Controls::Package.upstream_version
 
     control_metadata = Controls::Package::Metadata::Alternate.example
 

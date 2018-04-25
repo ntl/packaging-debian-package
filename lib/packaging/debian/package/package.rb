@@ -87,34 +87,6 @@ module Packaging
         output_file
       end
 
-      def read_available_output(io, &block)
-        data = String.new
-
-        loop do
-          read_data = io.read_nonblock(1024, exception: false)
-
-          break if read_data == :wait_readable
-
-          break if read_data.nil?
-
-          data.concat(read_data)
-        end
-
-        return if data.empty?
-
-        stringio = StringIO.new(data)
-
-        until stringio.eof?
-          line = stringio.gets
-
-          line.chomp!
-
-          block.(line)
-        end
-
-        data
-      end
-
       def output_file
         @output_file ||= File.join(output_dir, "#{name}-#{version}.deb")
       end

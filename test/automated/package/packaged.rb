@@ -13,9 +13,7 @@ context "Package" do
     package = Package.build(tarball_io, name, version)
     package.maintainer = maintainer
 
-    output_dir = Dir.mktmpdir
-
-    package.output_dir = output_dir
+    output_dir = package.output_dir
 
     comment "Output Directory: #{output_dir}"
 

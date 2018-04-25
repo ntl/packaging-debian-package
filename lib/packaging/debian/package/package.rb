@@ -5,6 +5,7 @@ module Packaging
 
       setting :maintainer
 
+      dependency :extract_tarball, Tarball::Extract
       dependency :execute_shell_command, ShellCommand::Execute
 
       attr_writer :output_dir
@@ -20,6 +21,7 @@ module Packaging
 
         settings.set(self, *namespace)
 
+        Tarball::Extract.configure(self, tarball_io, output_dir)
         ShellCommand::Execute.configure(self, logger: logger)
       end
 
@@ -37,7 +39,7 @@ module Packaging
       def call(&modify_metadata)
         logger.trace { "Building debian package (#{LogText.attributes(self)})" }
 
-        untar
+        extract_tarball.()
 
         write_control_file(&modify_metadata)
 
@@ -46,39 +48,6 @@ module Packaging
         logger.info { "Debian package built (#{LogText.attributes(self)}, File: #{file.inspect})" }
 
         file
-      end
-
-      def untar
-        begin
-          gzip_reader = Zlib::GzipReader.new(tarball_io)
-        rescue Zlib::GzipFile::Error
-          error_message = "Packaging failed, input is not in gzip format (#{LogText.attributes(self)})"
-          logger.error { error_message }
-          raise PackagingError, error_message
-        end
-
-        begin
-          Gem::Package::TarReader.new(gzip_reader) do |tar_reader|
-            tar_reader.each do |entry|
-              destination_path = File.join(output_dir, entry.full_name)
-
-              if entry.directory?
-                FileUtils.mkdir_p(destination_path)
-              else
-                destination_dir = File.dirname(destination_path)
-
-                FileUtils.mkdir_p(destination_dir)
-
-                File.open(destination_path, 'wb') do |io|
-                  io.write(entry.read) until entry.eof?
-                end
-              end
-            end
-          end
-
-        ensure
-          gzip_reader.close
-        end
       end
 
       def write_control_file(&modify_metadata)

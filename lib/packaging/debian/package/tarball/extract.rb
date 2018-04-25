@@ -5,12 +5,12 @@ module Packaging
         class Extract
           include Log::Dependency
 
-          configure :extract_tarball_io
+          configure :extract_tarball
 
           initializer :tarball_io, :output_dir
 
           def self.build(tarball, output_dir=nil)
-            output_dir ||= Dir.mktmpdir
+            output_dir ||= Dir.mktmpdir('extract-tarball')
 
             if tarball.is_a?(String)
               tarball_io = File.open(tarball, 'r')

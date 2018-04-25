@@ -13,8 +13,6 @@ context "Package" do
 
     package = Package.build(tarball_io, name, version)
 
-    package.output_dir = Dir.mktmpdir
-
     package.() do |metadata|
       SetAttributes.(metadata, control_metadata)
     end

@@ -8,11 +8,11 @@ context "Package" do
 
     tarball_io = Controls::Tarball::IO.example
 
-    package = Package.new(tarball_io, name, version)
+    package = Package.build(tarball_io, name, version)
 
-    package.execute_shell_command.failure!
+    execute_shell_command = Dependency::Substitute.(:execute_shell_command, package)
 
-    package.output_dir = Dir.mktmpdir
+    execute_shell_command.failure!
 
     test "Raises error" do
       action = proc {

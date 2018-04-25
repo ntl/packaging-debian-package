@@ -7,9 +7,7 @@ module Packaging
 
           initializer :data_stream, :output_dir
 
-          def self.build(tarball, output_dir=nil)
-            output_dir ||= Dir.mktmpdir('extract-tarball')
-
+          def self.build(tarball, output_dir)
             if tarball.is_a?(String)
               data_stream = File.open(tarball, 'r')
             else
@@ -20,7 +18,7 @@ module Packaging
             instance
           end
 
-          def self.call(tarball, output_dir=nil)
+          def self.call(tarball, output_dir)
             instance = build(tarball, output_dir)
             instance.()
           end

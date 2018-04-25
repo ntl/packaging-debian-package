@@ -5,7 +5,7 @@ context "Extract Tarball" do
     contents = Controls::Contents.example
     tarball = Controls::Tarball.example(contents: contents)
 
-    control_output_dir = Dir.mktmpdir('extract-tarball-test')
+    control_output_dir = Controls::Directory.random
 
     output_dir = Package::Tarball::Extract.(tarball, control_output_dir)
 

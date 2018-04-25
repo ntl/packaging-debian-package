@@ -3,10 +3,11 @@ require_relative '../automated_init'
 context "Extract Tarball" do
   context "Data Stream Given" do
     contents = Controls::Contents.example
+    output_dir = Controls::Directory.example
 
     data_stream = Controls::Tarball::DataStream.example(contents: contents)
 
-    output_dir = Package::Tarball::Extract.(data_stream)
+    output_dir = Package::Tarball::Extract.(data_stream, output_dir)
 
     test "Data stream is closed" do
       assert(data_stream.closed?)

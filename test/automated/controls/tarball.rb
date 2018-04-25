@@ -17,7 +17,7 @@ context "Controls" do
     end
 
     context "Extract" do
-      dir = Dir.mktmpdir('tarball-control-test')
+      dir = Controls::Directory.random
 
       filename = Controls::Tarball::Filename.example
 

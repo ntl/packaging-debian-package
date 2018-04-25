@@ -6,6 +6,10 @@ require 'open3'
 
 require 'packaging/debian/schemas/controls'
 
+require 'packaging/debian/package/controls/random'
+
+require 'packaging/debian/package/controls/directory'
+
 require 'packaging/debian/package/controls/contents'
 
 require 'packaging/debian/package/controls/tarball'

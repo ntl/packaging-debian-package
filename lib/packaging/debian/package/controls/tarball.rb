@@ -7,7 +7,7 @@ module Packaging
             filename ||= Filename.example(package_name: package_name, version: version)
             data_stream ||= stream(package_name: package_name, version: version, contents: contents)
 
-            dir = Dir.mktmpdir('control-tarball')
+            dir = Directory.random
 
             absolute_path = File.join(dir, filename)
 

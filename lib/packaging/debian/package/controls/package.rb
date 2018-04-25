@@ -11,7 +11,7 @@ module Packaging
 
             tarball = Tarball.example(package_name: name, version: version, contents: contents)
 
-            output_dir = Dir.mktmpdir('package-control')
+            output_dir = Directory.random
 
             package = Packaging::Debian::Package.new(tarball, name, version)
             package.maintainer = self.maintainer

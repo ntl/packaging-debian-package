@@ -1,4 +1,4 @@
 {
   "maintainer": "Test User <test.user@example.com>",
-  "packagesDirectory": "example_packages"
+  "packageDefinitionRoot": "./example_packages"
 }

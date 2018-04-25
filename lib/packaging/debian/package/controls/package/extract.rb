@@ -5,7 +5,7 @@ module Packaging
         module Package
           module Extract
             def self.call(deb_file, directory: nil)
-              directory ||= Dir.mktmpdir('extract-tarball-control')
+              directory ||= Directory.random
 
               `dpkg-deb -x #{deb_file} #{directory}`
 

@@ -5,12 +5,12 @@ module Packaging
 
       attr_writer :root_dir
       def root_dir
-        @root_dir ||= Dir.mktmpdir('prepare-package')
+        @root_dir ||= Dir.mktmpdir('packaging-debian-package')
       end
 
       initializer :tarball, :package_name, :package_version
 
-      setting :packages_directory
+      setting :package_definition_root
 
       def configure(root_dir: nil, settings: nil, namespace: nil)
         settings ||= Settings.build
@@ -18,7 +18,11 @@ module Packaging
 
         settings.set(self, *namespace)
 
-        self.root_dir = root_dir unless root_dir.nil?
+        unless root_dir.nil?
+          root_dir = File.absolute_path(root_dir)
+
+          self.root_dir = root_dir
+        end
       end
 
       def self.build(tarball, root_dir: nil, settings: nil, namespace: nil)
@@ -91,7 +95,7 @@ module Packaging
       end
 
       def package_definition_dir
-        @package_definition_dir ||= File.join(packages_directory, package_name)
+        @package_definition_dir ||= File.join(package_definition_root, package_name)
       end
 
       def self.parse_tarball_filename(filename)

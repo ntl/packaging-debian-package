@@ -6,7 +6,7 @@ context "Package" do
 
   tarball = Controls::Tarball.example(package_name: package_name, version: version)
 
-  root_dir = Dir.mktmpdir('some-stage-dir')
+  root_dir = Controls::Directory.random
 
   Package::Package.(tarball, root_dir: root_dir)
 

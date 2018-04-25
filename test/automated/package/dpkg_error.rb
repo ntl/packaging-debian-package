@@ -6,9 +6,9 @@ context "Package" do
     version = Controls::Package.version
     maintainer = Controls::Package.maintainer
 
-    tarball_io = Controls::Tarball::IO.example
+    tarball = Controls::Tarball.example
 
-    package = Package.build(tarball_io, name, version)
+    package = Package.build(tarball, name, version)
 
     execute_shell_command = Dependency::Substitute.(:execute_shell_command, package)
 

@@ -9,7 +9,11 @@ require 'packaging/debian/schemas/controls'
 require 'packaging/debian/package/controls/contents'
 
 require 'packaging/debian/package/controls/tarball'
-require 'packaging/debian/package/controls/tarball/io'
+require 'packaging/debian/package/controls/tarball/data_stream'
+require 'packaging/debian/package/controls/tarball/filename'
+require 'packaging/debian/package/controls/tarball/malformed'
+require 'packaging/debian/package/controls/tarball/prefix_directory'
+require 'packaging/debian/package/controls/tarball/tar_data'
 
 require 'packaging/debian/package/controls/package'
 require 'packaging/debian/package/controls/package/control_file'

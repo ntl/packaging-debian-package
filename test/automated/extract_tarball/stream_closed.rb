@@ -1,14 +1,14 @@
 require_relative '../automated_init'
 
 context "Extract Tarball" do
-  context "IO is Closed" do
+  context "Data Stream is Closed" do
     contents = Controls::Contents.example
 
-    tarball_io = Controls::Tarball::IO.example
-    tarball_io.close
+    data_stream = Controls::Tarball.stream
+    data_stream.close
 
     test "Raises error" do
-      assert proc { Package::Tarball::Extract.(tarball_io) } do
+      assert proc { Package::Tarball::Extract.(data_stream) } do
         raises_error?(Package::Tarball::Extract::ClosedError)
       end
     end

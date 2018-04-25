@@ -1,16 +1,15 @@
 require_relative '../automated_init'
 
 context "Extract Tarball" do
-  context "Extracted" do
+  context "Data Stream Given" do
     contents = Controls::Contents.example
-    tarball = Controls::Tarball.example(contents: contents)
 
-    control_output_dir = Dir.mktmpdir('extract-tarball-test')
+    data_stream = Controls::Tarball::DataStream.example(contents: contents)
 
-    output_dir = Package::Tarball::Extract.(tarball, control_output_dir)
+    output_dir = Package::Tarball::Extract.(data_stream)
 
-    test "Output directory is returned" do
-      assert(output_dir == control_output_dir)
+    test "Data stream is closed" do
+      assert(data_stream.closed?)
     end
 
     context "Contents" do

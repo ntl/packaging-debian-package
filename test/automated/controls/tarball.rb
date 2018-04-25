@@ -6,14 +6,18 @@ context "Controls" do
     package_name = Controls::Package.name
     version = Controls::Package.version
 
-    tarball = Controls::Tarball.example(package_name: package_name, version: version, contents: contents)
+    tarball = Controls::Tarball.example(
+      package_name: package_name,
+      version: version,
+      contents: contents
+    )
 
     test "Is path" do
       assert(tarball.is_a?(String))
     end
 
     context "Extract" do
-      dir = Dir.mktmpdir
+      dir = Dir.mktmpdir('tarball-control-test')
 
       filename = Controls::Tarball::Filename.example
 
@@ -28,35 +32,14 @@ context "Controls" do
       end
 
       context "Contents" do
-        package_dir = "#{package_name}-#{version}"
+        prefix_directory = Controls::Tarball::PrefixDirectory.example(
+          package_name: package_name,
+          version: version
+        )
 
-        test "Root package directory (#{package_dir})" do
-          full_package_dir = File.join(dir, package_dir)
+        untar_root = File.join(dir, prefix_directory)
 
-          assert(File.directory?(full_package_dir))
-        end
-
-        contents.each do |path, control_data|
-          full_path = File.join(dir, package_dir, path)
-
-          context "#{path}" do
-            if control_data == Dir
-              test "Is directory" do
-                assert(File.directory?(full_path))
-              end
-            else
-              test "Exists and has nonzero size" do
-                assert(File.size?(full_path))
-              end
-
-              test "Data" do
-                data = File.read(full_path)
-
-                assert(data == control_data)
-              end
-            end
-          end
-        end
+        Fixtures::Contents.(untar_root, contents)
       end
     end
   end

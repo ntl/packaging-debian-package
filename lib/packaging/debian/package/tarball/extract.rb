@@ -74,7 +74,7 @@ module Packaging
               end
             end
 
-          rescue ArgumentError
+          rescue ArgumentError => error
             error_message = "Could not extract tarball_io; not in tar format (#{LogText.attributes(self)})"
             logger.error { error_message }
             raise TarError, error_message

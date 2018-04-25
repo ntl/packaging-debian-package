@@ -8,9 +8,13 @@ context "Package" do
 
     contents = Controls::Package::Contents.example
 
-    tarball_io = Controls::Tarball::IO.example(package_name: name, version: version, contents: contents)
+    tarball = Controls::Tarball.example(
+      package_name: name,
+      version: version,
+      contents: contents
+    )
 
-    package = Package.build(tarball_io, name, version)
+    package = Package.build(tarball, name, version)
     package.maintainer = maintainer
 
     output_dir = package.output_dir

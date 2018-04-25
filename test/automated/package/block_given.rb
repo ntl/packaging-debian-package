@@ -9,9 +9,9 @@ context "Package" do
 
     contents = Controls::Package::Contents.example
 
-    tarball_io = Controls::Tarball::IO.example
+    tarball = Controls::Tarball.example
 
-    package = Package.build(tarball_io, name, version)
+    package = Package.build(tarball, name, version)
 
     package.() do |metadata|
       SetAttributes.(metadata, control_metadata)

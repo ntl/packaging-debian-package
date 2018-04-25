@@ -5,20 +5,20 @@ context "Extract Tarball" do
     contents = Controls::Contents.example
 
     context "Empty String" do
-      tarball_io = StringIO.new
+      data_stream = StringIO.new
 
       test "Raises error" do
-        assert proc { Package::Tarball::Extract.(tarball_io) } do
+        assert proc { Package::Tarball::Extract.(data_stream) } do
           raises_error?(Package::Tarball::Extract::GZipError)
         end
       end
     end
 
     context "Format Error" do
-      tarball_io = Controls::Tarball::IO::GZipError.example
+      tarball = Controls::Tarball::Malformed::GZip.example
 
       test "Raises error" do
-        assert proc { Package::Tarball::Extract.(tarball_io) } do
+        assert proc { Package::Tarball::Extract.(tarball) } do
           raises_error?(Package::Tarball::Extract::GZipError)
         end
       end

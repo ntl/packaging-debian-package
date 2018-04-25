@@ -3,45 +3,35 @@ module Packaging
     class Package
       module Controls
         module Tarball
-          def self.example(filename=nil, package_name: nil, version: nil, contents: nil)
+          def self.example(filename=nil, data_stream: nil, package_name: nil, version: nil, contents: nil)
             filename ||= Filename.example(package_name: package_name, version: version)
-
-            tarball_io = IO.example(package_name: package_name, version: version, contents: contents)
+            data_stream ||= stream(package_name: package_name, version: version, contents: contents)
 
             dir = Dir.mktmpdir('control-tarball')
 
             absolute_path = File.join(dir, filename)
 
             File.open(absolute_path, 'w') do |io|
-              io.write(tarball_io.read) until tarball_io.eof?
+              io.write(data_stream.read) until data_stream.eof?
             end
 
             absolute_path
           end
 
-          module PrefixDirectory
-            def self.example(package_name: nil, version: nil)
-              package_name ||= self.package_name
-              version ||= self.version
-
-              "#{package_name}-#{version}"
-            end
-
-            def self.package_name
-              Package.name
-            end
-
-            def self.version
-              Package.version
-            end
+          def self.stream(package_name: nil, version: nil, contents: nil)
+            DataStream.example(
+              package_name: package_name,
+              version: version,
+              contents: contents
+            )
           end
 
-          module Filename
-            def self.example(package_name: nil, version: nil)
-              prefix_directory = PrefixDirectory.example(package_name: package_name, version: version)
-
-              "#{prefix_directory}.tar.gz"
-            end
+          def self.data(package_name: nil, version: nil, contents: nil)
+            DataStream.data(
+              package_name: package_name,
+              version: version,
+              contents: contents
+            )
           end
         end
       end

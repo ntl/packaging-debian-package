@@ -9,7 +9,7 @@ context "Prepare" do
 
     root_dir = Dir.mktmpdir('some-stage-dir')
 
-    prepare = Package::Prepare.(tarball, root_dir: root_dir)
+    Package::Package.(tarball, root_dir: root_dir)
 
     context "Staged Contents" do
       stage_dir = File.join(root_dir, "deb/#{package_name}-#{version}")

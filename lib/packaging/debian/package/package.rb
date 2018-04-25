@@ -5,6 +5,8 @@ module Packaging
 
       setting :maintainer
 
+      dependency :execute_shell_command, ShellCommand::Execute
+
       attr_writer :output_dir
       def output_dir
         @output_dir ||= File.join('tmp', "package-#{SecureRandom.alphanumeric}")
@@ -17,6 +19,8 @@ module Packaging
         namespace = Array(namespace)
 
         settings.set(self, *namespace)
+
+        ShellCommand::Execute.configure(self)
       end
 
       def self.build(tarball, name, version, settings=nil, namespace: nil)

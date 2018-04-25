@@ -1,5 +1,7 @@
 require 'settings'; Settings.activate
 
+require 'shell_command/execute'
+
 require 'packaging/debian/schemas'
 
 require 'packaging/debian/package/defaults'

@@ -10,4 +10,4 @@ require 'packaging/debian/package/settings'
 
 require 'packaging/debian/package/tarball/extract'
 
-require 'packaging/debian/package/package'
+require 'packaging/debian/package/prepare'

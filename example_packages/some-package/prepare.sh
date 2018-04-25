@@ -1,6 +1,8 @@
 SOURCE_DIRECTORY=$1
-TARGET_DIRECTORY=$2
+STAGE_DIRECTORY=$2
 
-cp -av $SOURCE_DIRECTORY $TARGET_DIRECTORY
+cp -a -v $SOURCE_DIRECTORY/* $STAGE_DIRECTORY
 
-cp ./example-asset $TARGET
+cat ./example-asset
+
+cp ./example-asset $STAGE_DIRECTORY

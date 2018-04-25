@@ -7,18 +7,18 @@ module Packaging
 
           configure :extract_tarball
 
-          initializer :tarball_io, :output_dir
+          initializer :data_stream, :output_dir
 
           def self.build(tarball, output_dir=nil)
             output_dir ||= Dir.mktmpdir('extract-tarball')
 
             if tarball.is_a?(String)
-              tarball_io = File.open(tarball, 'r')
+              data_stream = File.open(tarball, 'r')
             else
-              tarball_io = tarball
+              data_stream = tarball
             end
 
-            instance = new(tarball_io, output_dir)
+            instance = new(data_stream, output_dir)
             instance
           end
 
@@ -28,28 +28,28 @@ module Packaging
           end
 
           def call
-            logger.trace { "Extracting tarball_io (#{LogText.attributes(self)})" }
+            logger.trace { "Extracting tarball (#{LogText.attributes(self)})" }
 
-            if tarball_io.closed?
-              error_message = "Could not extract tarball_io; IO is closed (#{LogText.attributes(self)})"
+            if data_stream.closed?
+              error_message = "Could not extract data_stream; IO is closed (#{LogText.attributes(self)})"
               logger.error { error_message }
               raise ClosedError, error_message
             end
 
-            gzip_reader = Zlib::GzipReader.new(tarball_io)
+            gzip_reader = Zlib::GzipReader.new(data_stream)
 
             Gem::Package::TarReader.new(gzip_reader) do |tar_reader|
               extract_tar(tar_reader)
             end
 
-            logger.debug { "Extracted tarball_io (#{LogText.attributes(self)})" }
+            logger.debug { "Extracted tarball (#{LogText.attributes(self)})" }
 
-            tarball_io.close
+            data_stream.close
 
             output_dir
 
           rescue Zlib::GzipFile::Error, Zlib::DataError
-            error_message = "Could not extract tarball_io; not in gzip format (#{LogText.attributes(self)})"
+            error_message = "Could not extract data_stream; not in gzip format (#{LogText.attributes(self)})"
             logger.error { error_message }
             raise GZipError, error_message
 
@@ -75,7 +75,7 @@ module Packaging
             end
 
           rescue ArgumentError => error
-            error_message = "Could not extract tarball_io; not in tar format (#{LogText.attributes(self)})"
+            error_message = "Could not extract data_stream; not in tar format (#{LogText.attributes(self)})"
             logger.error { error_message }
             raise TarError, error_message
           end
@@ -86,7 +86,7 @@ module Packaging
 
           module LogText
             def self.attributes(extract)
-              %{Input: #{extract.tarball_io.inspect}, Output Directory: #{extract.output_dir.inspect}}
+              %{Input: #{extract.data_stream.inspect}, Output Directory: #{extract.output_dir.inspect}}
             end
           end
         end

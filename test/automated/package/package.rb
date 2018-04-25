@@ -6,15 +6,33 @@ context "Package" do
 
   tarball = Controls::Tarball.example(package_name: package_name, version: version)
 
-  root_dir = Controls::Directory.random
+  stage_dir = Controls::Directory.random
 
-  Package::Package.(tarball, root_dir: root_dir)
+  deb_file = Package::Package.(tarball, stage_dir: stage_dir)
 
-  context "Staged Contents" do
-    stage_dir = File.join(root_dir, "deb/#{package_name}-#{version}")
+  test "Path to debian file is returned" do
+    control_deb_file = File.join(stage_dir, 'deb', "#{package_name}-#{version}.deb")
 
-    control_contents = Controls::Contents::Staged.example
+    assert(File.absolute_path(deb_file) == File.absolute_path(control_deb_file))
+  end
 
-    Fixtures::Contents.(stage_dir, control_contents)
+  test "Debian file returned exists" do
+    assert(File.size?(deb_file))
+  end
+
+  test "Stage directory is emptied of all files except package" do
+    stage_files = Dir[File.join(stage_dir, '**/*')].map do |entry|
+      File.absolute_path(entry)
+    end
+
+    control_stage_files = [File.dirname(deb_file), deb_file]
+
+    assert(stage_files == control_stage_files)
+  end
+
+  context "Package" do
+    context "Metadata"
+
+    context "Contents"
   end
 end

@@ -3,10 +3,9 @@ module Packaging
     class Package
       module Controls
         module Tarball
-          def self.example(package_name: nil, version: nil, contents: nil)
+          def self.example(filename=nil, package_name: nil, version: nil, contents: nil)
+            filename ||= Filename.example(package_name: package_name, version: version)
             contents ||= Package::Contents.example
-
-            filename = Filename.example(package_name: package_name, version: version)
 
             package_root = File.basename(filename, '.tar.gz')
 
@@ -47,12 +46,12 @@ module Packaging
             StringIO.new(compressed_tarball)
           end
 
-          module Filename
+          module PrefixDirectory
             def self.example(package_name: nil, version: nil)
               package_name ||= self.package_name
               version ||= self.version
 
-              "#{package_name}-#{version}.tar.gz"
+              "#{package_name}-#{version}"
             end
 
             def self.package_name
@@ -61,6 +60,14 @@ module Packaging
 
             def self.version
               Package.version
+            end
+          end
+
+          module Filename
+            def self.example(package_name: nil, version: nil)
+              prefix_directory = PrefixDirectory.example(package_name: package_name, version: version)
+
+              "#{prefix_directory}.tar.gz"
             end
           end
         end

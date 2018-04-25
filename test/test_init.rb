@@ -3,9 +3,11 @@ ENV['LOG_LEVEL'] ||= '_min'
 
 puts RUBY_DESCRIPTION
 
-require_relative '../init.rb'
+require_relative '../init'
 
 require 'test_bench'; TestBench.activate
+
+require_relative './fixtures/fixtures_init'
 
 require 'pp'
 require 'securerandom'

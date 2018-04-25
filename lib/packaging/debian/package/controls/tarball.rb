@@ -8,7 +8,7 @@ module Packaging
 
             tarball_io = IO.example(package_name: package_name, version: version, contents: contents)
 
-            dir = Dir.mktmpdir
+            dir = Dir.mktmpdir('control-tarball')
 
             absolute_path = File.join(dir, filename)
 

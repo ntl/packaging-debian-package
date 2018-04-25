@@ -8,8 +8,8 @@ context "Controls" do
 
     tarball = Controls::Tarball.example(package_name: package_name, version: version, contents: contents)
 
-    test "Is StringIO" do
-      assert(tarball.is_a?(StringIO))
+    test "Is path" do
+      assert(tarball.is_a?(String))
     end
 
     context "Extract" do
@@ -17,13 +17,7 @@ context "Controls" do
 
       filename = Controls::Tarball::Filename.example
 
-      local_path = File.join(dir, filename)
-
-      File.open(local_path, 'w') do |io|
-        io.write(tarball.read) until tarball.eof?
-      end
-
-      untar_command = %[tar -C #{dir} -v -x -f #{local_path}]
+      untar_command = %[tar -C #{dir} -v -x -f #{tarball}]
 
       comment("Command: #{untar_command}")
 

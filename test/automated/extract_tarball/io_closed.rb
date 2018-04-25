@@ -4,11 +4,11 @@ context "Extract Tarball" do
   context "IO is Closed" do
     contents = Controls::Contents.example
 
-    tarball = Controls::Tarball.example
-    tarball.close
+    tarball_io = Controls::Tarball::IO.example
+    tarball_io.close
 
     test "Raises error" do
-      assert proc { Package::Tarball::Extract.(tarball) } do
+      assert proc { Package::Tarball::Extract.(tarball_io) } do
         raises_error?(Package::Tarball::Extract::ClosedError)
       end
     end

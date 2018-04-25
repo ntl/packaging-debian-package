@@ -4,10 +4,10 @@ context "Extract Tarball" do
   context "Tar Format Error" do
     contents = Controls::Contents.example
 
-    tarball = Controls::Tarball::TarError.example
+    tarball_io = Controls::Tarball::IO::TarError.example
 
     test "Raises error" do
-      assert proc { Package::Tarball::Extract.(tarball) } do
+      assert proc { Package::Tarball::Extract.(tarball_io) } do
         raises_error?(Package::Tarball::Extract::TarError)
       end
     end

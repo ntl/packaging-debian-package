@@ -6,7 +6,7 @@ context "Package" do
     version = Controls::Package.version
     maintainer = Controls::Package.maintainer
 
-    tarball_io = Controls::Tarball.example
+    tarball_io = Controls::Tarball::IO.example
 
     package = Package.new(tarball_io, name, version)
 

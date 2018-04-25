@@ -9,15 +9,21 @@ module Packaging
 
           initializer :tarball_io, :output_dir
 
-          def self.build(tarball_io, output_dir=nil)
+          def self.build(tarball, output_dir=nil)
             output_dir ||= Dir.mktmpdir
+
+            if tarball.is_a?(String)
+              tarball_io = File.open(tarball, 'r')
+            else
+              tarball_io = tarball
+            end
 
             instance = new(tarball_io, output_dir)
             instance
           end
 
-          def self.call(tarball_io, output_dir=nil)
-            instance = build(tarball_io, output_dir)
+          def self.call(tarball, output_dir=nil)
+            instance = build(tarball, output_dir)
             instance.()
           end
 
@@ -37,6 +43,8 @@ module Packaging
             end
 
             logger.debug { "Extracted tarball_io (#{LogText.attributes(self)})" }
+
+            tarball_io.close
 
             output_dir
 

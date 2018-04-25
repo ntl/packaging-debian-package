@@ -9,7 +9,7 @@ context "Package" do
 
     contents = Controls::Package::Contents.example
 
-    tarball_io = Controls::Tarball.example
+    tarball_io = Controls::Tarball::IO.example
 
     package = Package.build(tarball_io, name, version)
 

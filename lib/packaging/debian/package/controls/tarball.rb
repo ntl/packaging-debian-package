@@ -5,45 +5,18 @@ module Packaging
         module Tarball
           def self.example(filename=nil, package_name: nil, version: nil, contents: nil)
             filename ||= Filename.example(package_name: package_name, version: version)
-            contents ||= Package::Contents.example
 
-            package_root = File.basename(filename, '.tar.gz')
+            tarball_io = IO.example(package_name: package_name, version: version, contents: contents)
 
-            uncompressed_io = StringIO.new
+            dir = Dir.mktmpdir
 
-            Gem::Package::TarWriter.new(uncompressed_io) do |tar_writer|
-              contents.each do |path, data|
-                full_path = File.join(package_root, path)
+            absolute_path = File.join(dir, filename)
 
-                if data == Dir
-                  tar_writer.mkdir(full_path, 0755)
-                else
-                  tar_writer.add_file(full_path, 0644) do |file|
-                    file.write(data)
-                  end
-                end
-              end
+            File.open(absolute_path, 'w') do |io|
+              io.write(tarball_io.read) until tarball_io.eof?
             end
 
-            compressed_tarball = String.new
-
-            compressed_io = StringIO.new(compressed_tarball, 'w')
-
-            gzip_writer = Zlib::GzipWriter.new(compressed_io)
-
-            begin
-              uncompressed_io.rewind
-
-              until uncompressed_io.eof?
-                gzip_writer.write(uncompressed_io.read)
-              end
-            ensure
-              gzip_writer.close
-
-              compressed_io.close
-            end
-
-            StringIO.new(compressed_tarball)
+            absolute_path
           end
 
           module PrefixDirectory

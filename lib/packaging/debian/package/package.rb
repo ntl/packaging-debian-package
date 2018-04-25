@@ -8,9 +8,6 @@ module Packaging
         @root_dir ||= Dir.mktmpdir('prepare-package')
       end
 
-      dependency :execute_shell_command, ShellCommand::Execute
-      dependency :extract_tarball, Tarball::Extract
-
       initializer :tarball
 
       setting :packages_directory
@@ -22,9 +19,6 @@ module Packaging
         settings.set(self, *namespace)
 
         self.root_dir = root_dir unless root_dir.nil?
-
-        ShellCommand::Execute.configure(self, logger: logger)
-        Tarball::Extract.configure(self, tarball, self.root_dir)
       end
 
       def self.build(tarball, root_dir: nil, settings: nil, namespace: nil)
@@ -41,7 +35,7 @@ module Packaging
       def call
         logger.trace { "Preparing package (#{LogText.attributes(self)})" }
 
-        extract_tarball.()
+        Tarball::Extract.(tarball, root_dir)
 
         package = nil
 
@@ -56,9 +50,10 @@ module Packaging
 
           package = Transform::Read.(metadata_text, :rfc822, Schemas::Package)
 
-          success, exit_status = execute_shell_command.(
+          success, exit_status = ShellCommand::Execute.(
             [ 'sh', '-e', 'prepare.sh', source_dir, stage_dir],
-            include: :exit_status
+            include: :exit_status,
+            logger: logger
           )
         end
 

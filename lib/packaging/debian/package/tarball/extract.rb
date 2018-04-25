@@ -5,8 +5,6 @@ module Packaging
         class Extract
           include Log::Dependency
 
-          configure :extract_tarball
-
           initializer :data_stream, :output_dir
 
           def self.build(tarball, output_dir=nil)

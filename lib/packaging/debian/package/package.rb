@@ -8,7 +8,7 @@ module Packaging
         @root_dir ||= Dir.mktmpdir('prepare-package')
       end
 
-      initializer :tarball
+      initializer :tarball, :package_name, :package_version
 
       setting :packages_directory
 
@@ -22,7 +22,9 @@ module Packaging
       end
 
       def self.build(tarball, root_dir: nil, settings: nil, namespace: nil)
-        instance = new(tarball)
+        package_name, package_version = parse_tarball_filename(tarball)
+
+        instance = new(tarball, package_name, package_version)
         instance.configure(root_dir: root_dir, settings: settings, namespace: namespace)
         instance
       end
@@ -76,14 +78,6 @@ module Packaging
         logger.info { "Package prepared (#{LogText.attributes(self)})" }
       end
 
-      def package_name
-        parsed_tarball[0]
-      end
-
-      def package_version
-        parsed_tarball[1]
-      end
-
       def source_dir
         @source_dir ||= File.join(root_dir, "#{package_name}-#{package_version}")
       end
@@ -96,19 +90,16 @@ module Packaging
         @deb_dir ||= File.join(root_dir, 'deb')
       end
 
-      def parsed_tarball
-        @parsed_tarball ||=
-          begin
-            basename = File.basename(tarball, '.tar.gz')
-
-            package_name, _ , version = basename.rpartition('-')
-
-            [package_name, version]
-          end
-      end
-
       def package_definition_dir
         @package_definition_dir ||= File.join(packages_directory, package_name)
+      end
+
+      def self.parse_tarball_filename(filename)
+        basename = File.basename(filename, '.tar.gz')
+
+        package_name, _ , package_version = basename.rpartition('-')
+
+        return package_name, package_version
       end
 
       module LogText

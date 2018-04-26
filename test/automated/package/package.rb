@@ -12,7 +12,7 @@ context "Package" do
   deb_file = Package::Package.(tarball, stage_dir: stage_dir)
 
   test "Path to debian file is returned" do
-    control_deb_file = File.join(stage_dir, 'deb', "#{package_name}-#{version}.deb")
+    control_deb_file = File.join(stage_dir, "#{package_name}-#{version}.deb")
 
     assert(File.absolute_path(deb_file) == File.absolute_path(control_deb_file))
   end
@@ -26,7 +26,7 @@ context "Package" do
       File.absolute_path(entry)
     end
 
-    control_stage_files = [File.dirname(deb_file), deb_file]
+    control_stage_files = [deb_file]
 
     assert(stage_files == control_stage_files)
   end

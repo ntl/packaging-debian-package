@@ -99,11 +99,17 @@ module Packaging
           return # XXX
         end
 
-        package_file = File.join(output_dir, "#{package_name}-#{package_version}.deb")
+        package_basename = "#{package_name}-#{package_version}.deb"
+
+        temporary_package_file = File.join(output_dir, package_basename)
+
+        package_file = File.join(stage_dir, package_basename)
+
+        FileUtils.mv(temporary_package_file, package_file)
 
         unless preserve
           FileUtils.rm_rf(source_dir)
-          FileUtils.rm_rf(package_root)
+          FileUtils.rm_rf(output_dir)
         end
 
         logger.info { "Package built (#{LogText.attributes(self)}, File: #{package_file})" }

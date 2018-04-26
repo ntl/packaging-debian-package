@@ -1,4 +1,6 @@
 {
   "maintainer": "Test User <test.user@example.com>",
+  "defaultArchitecture": "amd64",
+  "defaultDescription": "(No description)",
   "packageDefinitionRoot": "./example_packages"
 }

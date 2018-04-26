@@ -9,6 +9,15 @@ module Packaging
 
               "#{prefix_directory}.tar.gz"
             end
+
+            module Alternate
+              def self.example
+                package_name = Package::Alternate.package
+                version = Package::Alternate.version
+
+                Filename.example(package_name: package_name, version: version)
+              end
+            end
           end
         end
       end

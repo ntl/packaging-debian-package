@@ -17,6 +17,9 @@ module Packaging
       initializer :tarball, :package_name, :package_version
 
       setting :package_definition_root
+      setting :default_description
+      setting :default_architecture
+      setting :maintainer
 
       def configure(stage_dir: nil, preserve: nil, settings: nil, namespace: nil)
         settings ||= Settings.build
@@ -49,6 +52,12 @@ module Packaging
       def call
         logger.trace { "Building package (#{LogText.attributes(self)})" }
 
+        unless File.directory?(package_definition_dir)
+          error_message = "Cannot find package definition (#{LogText.attributes(self)}, Directory: #{package_definition_dir})"
+          logger.error { error_message }
+          raise UnknownPackageError, error_message
+        end
+
         Tarball::Extract.(tarball, stage_dir)
 
         package = nil
@@ -57,28 +66,33 @@ module Packaging
         Dir.mkdir(package_root)
         Dir.mkdir(File.join(package_root, 'DEBIAN'))
 
-        success, exit_status = nil, nil
-
         Dir.chdir(package_definition_dir) do
-          metadata_text = File.read('metadata')
-
-          package = Transform::Read.(metadata_text, :rfc822, Schemas::Package)
-
           success, exit_status = ShellCommand::Execute.(
             [ 'sh', '-e', 'prepare.sh', source_dir, package_root],
             include: :exit_status,
             logger: logger
           )
-        end
 
-        unless success
-          error_message = "Package preparation failed (#{LogText.attributes(self)}, Exit Status: #{exit_status})"
-          logger.error { error_message }
-          return # XXX
+          unless success
+            error_message = "Package preparation failed (#{LogText.attributes(self)}, Exit Status: #{exit_status})"
+            logger.error { error_message }
+            raise PackageFailure, error_message
+          end
+
+          if File.size?('metadata')
+            metadata_text = File.read('metadata')
+
+            package = Transform::Read.(metadata_text, :rfc822, Schemas::Package)
+          else
+            package = Schemas::Package.new
+          end
         end
 
         package.package ||= package_name
         package.version ||= package_version
+        package.description ||= default_description
+        package.architecture ||= default_architecture
+        package.maintainer ||= maintainer
 
         control_file_text = Transform::Write.(package, :rfc822)
 
@@ -96,7 +110,7 @@ module Packaging
         unless success
           error_message = "Failed to build .deb file (#{LogText.attributes(self)}, Exit Status: #{exit_status})"
           logger.error { error_message }
-          return # XXX
+          raise PackageFailure, error_message
         end
 
         package_basename = "#{package_name}-#{package_version}.deb"
@@ -158,6 +172,8 @@ module Packaging
       end
 
       MalformedFilenameError = Class.new(StandardError)
+      PackageFailure = Class.new(StandardError)
+      UnknownPackageError = Class.new(StandardError)
 
       module LogText
         def self.attributes(prepare)

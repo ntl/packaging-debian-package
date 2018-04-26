@@ -3,8 +3,9 @@ require_relative '../automated_init'
 context "Package" do
   package_name = Controls::Package.name
   version = Controls::Package.upstream_version
+  contents = Controls::Contents.example
 
-  tarball = Controls::Tarball.example(package_name: package_name, version: version)
+  tarball = Controls::Tarball.example(package_name: package_name, version: version, contents: contents)
 
   stage_dir = Controls::Directory.random
 
@@ -31,8 +32,18 @@ context "Package" do
   end
 
   context "Package" do
-    context "Metadata"
+    context "Metadata" do
+      control_metadata = Controls::Package::Metadata.example
 
-    context "Contents"
+      metadata = Controls::Package::Queries::GetMetadata.(deb_file)
+
+      assert(metadata == control_metadata)
+    end
+
+    context "Contents" do
+      directory = Controls::Package::Extract.(deb_file)
+
+      Fixtures::Contents.(directory, contents)
+    end
   end
 end

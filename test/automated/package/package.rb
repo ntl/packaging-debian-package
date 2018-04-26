@@ -9,7 +9,7 @@ context "Package" do
 
   stage_dir = Controls::Directory.random
 
-  deb_file = Package::Package.(tarball, stage_dir: stage_dir)
+  deb_file = Package.(tarball, stage_dir: stage_dir)
 
   test "Path to debian file is returned" do
     control_deb_file = File.join(stage_dir, "#{package_name}-#{version}.deb")

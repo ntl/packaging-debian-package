@@ -134,16 +134,34 @@ module Packaging
       end
 
       def self.parse_tarball_filename(filename)
+        unless filename.end_with?('.tar.gz')
+          error_message = "Specified file name does not have .tar.gz extension (Filename: #{filename.inspect})"
+          logger.error { error_message }
+          raise MalformedFilenameError, error_message
+        end
+
         basename = File.basename(filename, '.tar.gz')
 
         package_name, _ , package_version = basename.rpartition('-')
 
+        if package_name.empty? || !package_version.match?(/[[:digit:]]/)
+          error_message = "Specified file name does not include a version (Filename: #{filename.inspect})"
+          logger.error { error_message }
+          raise MalformedFilenameError, error_message
+        end
+
         return package_name, package_version
       end
 
+      def self.logger
+        @logger ||= Log.get(self)
+      end
+
+      MalformedFilenameError = Class.new(StandardError)
+
       module LogText
         def self.attributes(prepare)
-          "Package: #{prepare.package_name}, Version: #{prepare.package_version}"
+          "Package: #{prepare.package_name.inspect}, Version: #{prepare.package_version.inspect}"
         end
       end
     end

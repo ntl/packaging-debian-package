@@ -66,9 +66,12 @@ module Packaging
         Dir.mkdir(package_root)
         Dir.mkdir(File.join(package_root, 'DEBIAN'))
 
+        relative_source_dir = relative_path(source_dir, package_definition_dir)
+        relative_package_root = relative_path(package_root, package_definition_dir)
+
         Dir.chdir(package_definition_dir) do
           success, exit_status = ShellCommand::Execute.(
-            [ 'sh', '-e', 'prepare.sh', source_dir, package_root],
+            [ 'sh', '-e', 'prepare.sh', relative_source_dir, relative_package_root],
             include: :exit_status,
             logger: logger
           )
@@ -129,6 +132,18 @@ module Packaging
         logger.info { "Package built (#{LogText.attributes(self)}, File: #{package_file})" }
 
         package_file
+      end
+
+      def relative_path(target, source)
+        source_path = Pathname(source)
+        source_path = source_path.expand_path unless source_path.absolute?
+
+        target_path = Pathname(target)
+        target_path = target_path.expand_path unless target_path.absolute?
+
+        relative_path = target_path.relative_path_from(source_path)
+
+        relative_path.to_s
       end
 
       def source_dir

@@ -32,7 +32,9 @@ module Packaging
             unless metadata.nil?
               metadata_file = File.join(package_definition_dir, 'metadata')
 
-              File.write(metadata_file, metadata)
+              metadata_text = Transform::Write.(metadata, :rfc822)
+
+              File.write(metadata_file, metadata_text)
             end
 
             package_definition_dir
@@ -49,8 +51,7 @@ module Packaging
               metadata = Package::Metadata.example
               metadata.package = nil
               metadata.version = nil
-
-              Transform::Write.(metadata, :rfc822)
+              metadata
             end
           end
         end

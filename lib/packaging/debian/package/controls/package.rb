@@ -11,19 +11,25 @@ module Packaging
 
             tarball = Tarball.example(package_name: name, version: version, contents: contents)
 
-            output_dir = Directory.random
-
-            package = Packaging::Debian::Package.new(tarball, name, version)
-            package.maintainer = self.maintainer
-            package.output_dir = output_dir
+            stage_dir = Directory.random
 
             control_metadata = Metadata.example(package: name, version: version)
+
+            package = Packaging::Debian::Package.new(tarball, name, version)
+
+            package.maintainer = self.maintainer
+
+            package_definition_dir = PackageDefinition.example(
+              package_name: name,
+              metadata: control_metadata
+            )
+            package.package_definition_root = File.dirname(package_definition_dir)
+
+            package.stage_dir = stage_dir
 
             package.() do |metadata|
               SetAttributes.(metadata, control_metadata)
             end
-
-            package.output_file
           end
 
           def self.filename(package: nil, version: nil, directory: nil)

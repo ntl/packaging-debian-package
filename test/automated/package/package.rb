@@ -35,7 +35,7 @@ context "Package" do
     context "Metadata" do
       control_metadata = Controls::Package::Metadata.example
 
-      metadata = Controls::Package::Queries::GetMetadata.(deb_file)
+      metadata = Packaging::Debian::Schemas::Package::Read.(deb_file)
 
       assert(metadata == control_metadata)
     end

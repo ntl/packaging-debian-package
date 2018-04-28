@@ -32,7 +32,7 @@ context "Package" do
     end
 
     context "Assigned Metadata" do
-      metadata = Controls::Package::Queries::GetMetadata.(deb_file)
+      metadata = Packaging::Debian::Schemas::Package::Read.(deb_file)
 
       test "Maintainer" do
         assert(metadata.maintainer == package.maintainer)

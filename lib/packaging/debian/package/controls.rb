@@ -25,6 +25,5 @@ require 'packaging/debian/package/controls/package/alternate'
 require 'packaging/debian/package/controls/package/control_file'
 require 'packaging/debian/package/controls/package/extract'
 require 'packaging/debian/package/controls/package/metadata'
-require 'packaging/debian/package/controls/package/queries'
 
 require 'packaging/debian/package/controls/package_definition'

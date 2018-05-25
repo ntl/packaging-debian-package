@@ -3,6 +3,8 @@ module Packaging
     class Package
       include Log::Dependency
 
+      configure :package
+
       attr_writer :stage_dir
       def stage_dir
         @stage_dir ||= Dir.mktmpdir('packaging-debian-package')

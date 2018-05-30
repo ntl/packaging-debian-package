@@ -1,6 +1,3 @@
-require 'rubygems'
-require 'rubygems/package'
-
 require 'tmpdir'
 require 'open3'
 

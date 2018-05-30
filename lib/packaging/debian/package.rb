@@ -1,3 +1,6 @@
+require 'rubygems'
+require 'rubygems/package'
+
 require 'settings'; Settings.activate
 
 require 'shell_command/execute'

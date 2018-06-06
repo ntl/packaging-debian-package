@@ -93,7 +93,7 @@ module Packaging
           end
         end
 
-        package.package ||= package_name
+        package.package ||= debian_package_name
         package.version ||= package_version
         package.description ||= default_description
         package.architecture ||= default_architecture
@@ -148,6 +148,10 @@ module Packaging
         relative_path.to_s
       end
 
+      def debian_package_name
+        @debian_package_name ||= package_name.gsub('_', '-')
+      end
+
       def source_dir
         @source_dir ||= File.join(stage_dir, "#{package_name}-#{package_version}")
       end
@@ -161,7 +165,7 @@ module Packaging
       end
 
       def package_definition_dir
-        @package_definition_dir ||= File.join(package_definition_root, package_name)
+        @package_definition_dir ||= File.join(package_definition_root, debian_package_name)
       end
 
       def self.parse_tarball_filename(filename)
@@ -194,7 +198,7 @@ module Packaging
 
       module LogText
         def self.attributes(prepare)
-          "Package: #{prepare.package_name.inspect}, Version: #{prepare.package_version.inspect}"
+          "Package: #{prepare.debian_package_name.inspect}, Version: #{prepare.package_version.inspect}"
         end
       end
     end

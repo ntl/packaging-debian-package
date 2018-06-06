@@ -16,6 +16,7 @@ require 'packaging/debian/package/controls/tarball/filename'
 require 'packaging/debian/package/controls/tarball/malformed'
 require 'packaging/debian/package/controls/tarball/prefix_directory'
 require 'packaging/debian/package/controls/tarball/tar_data'
+require 'packaging/debian/package/controls/tarball/underscore_delimited'
 
 require 'packaging/debian/package/controls/package'
 require 'packaging/debian/package/controls/package/alternate'
